@@ -51,17 +51,42 @@ class App extends React.Component {
     console.log(text);
     search(text, '25')
     .then((results) => {
-      console.log(results);
       if (results instanceof Array) {
+        for (let book of results) {
+          if (this.isCurrentlyReading(book.id)) {
+            book.shelf = "currentlyReading";
+          } else if (this.isWantToRead(book.id)) {
+            book.shelf = "wantToRead";
+          } else if (this.isRead(book.id)) {
+            book.shelf = "read";
+          } else {
+            book.shelf = "none";
+          }
+        }
         this.setState({ bookSearchResults: results })
-
       } else {
         this.setState({ bookSearchResults: [] })
-
       }
     })
   }
 
+  isCurrentlyReading = (bookId) => {
+    const currentlyReadingBooks = this.state.currentlyReading || [];
+    const index = currentlyReadingBooks.findIndex((book) => book.id === bookId );
+    return index !== -1;
+  }
+
+  isWantToRead = (bookId) => {
+    const wantToReadBooks = this.state.wantToRead || [];
+    const index = wantToReadBooks.findIndex((book) => book.id === bookId );
+    return index !== -1;
+  }
+
+  isRead = (bookId) => {
+    const readBooks = this.state.read || [];
+    const index = readBooks.findIndex((book) => book.id === bookId );
+    return index !== -1;
+  }
 
   render() {
     return (
